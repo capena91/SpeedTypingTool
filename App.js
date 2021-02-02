@@ -1,8 +1,8 @@
-import React from "react";
-import ReactDOM from "react-dom";
+import React, { useState, useEffect } from "react";
 
 function App() {
   const [text, setText] = useState("");
+  const [time, setTime] = useState(5);
 
   function handleChange(e) {
     const { value } = e.target;
@@ -14,6 +14,14 @@ function App() {
     return textArr.filter(word => word !== "").length
   }
 
+  useEffect(() => {
+    if (time > 0) {
+      setTimeout(() => {
+        setTime(time => time - 1);
+      }, 1000)
+    }
+  }, [time])
+
   return (
     <>
       <h1>Speed Typing Exercise</h1>
@@ -21,7 +29,7 @@ function App() {
         onChange={handleChange}
         value={text}
       />
-      <h4>Timer</h4>
+      <h4>Time Remaining: {time}</h4>
       <button onClick={() => wordCount(text)}>Start</button>
       <h1>Word count:</h1>
     </>
