@@ -1,58 +1,62 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 function App() {
   const STARTING_TIME = 15
 
-  const [text, setText] = useState('');
+  const [userInput, setUserInput] = useState('');
   const [time, setTime] = useState(STARTING_TIME);
-  const [timer, setTimer] = useState(false);
-  const [wordCount, setWordCount] = useState(0)
+  const [countDown, setCountDown] = useState(false);
+  const [wordCount, setWordCount] = useState(0);
+  const textareaRef = useRef(null);
 
   function handleChange(e) {
     const { value } = e.target;
-    setText(value);
+    setUserInput(value);
   }
 
-  function finalWordCount(text) {
-    const textArr = text.split(' ');
+  function finalWordCount(userInput) {
+    const textArr = userInput.split(' ');
     return textArr.filter(word => word !== "").length
   }
 
   function startGame() {
-    setTimer(true);
+    setCountDown(true);
     setTime(STARTING_TIME);
-    setText('');
+    setUserInput('');
+    textareaRef.current.disabled = false;
+    textareaRef.current.focus()
   }
 
   function endGame() {
-    setTimer(false);
-    setWordCount(finalWordCount(text));
+    setCountDown(false);
+    setWordCount(finalWordCount(userInput));
   }
 
 
 
   useEffect(() => {
-    if (timer && time > 0) {
+    if (countDown && time > 0) {
       setTimeout(() => {
         setTime(time => time - 1);
       }, 1000)
     } else if (time === 0) {
       endGame();
     }
-  }, [time, timer])
+  }, [time, countDown])
 
   return (
     <>
       <h1>Speed Typing Exercise</h1>
       <textarea
+        ref={textareaRef}
         onChange={handleChange}
-        value={text}
-        disabled={!timer}
+        value={userInput}
+        disabled={!countDown}
       />
       <h4>Time Remaining: {time}</h4>
       <button
         onClick={startGame}
-        disabled={timer}>
+        disabled={countDown}>
         Start
       </button>
       <h1>Word count: {wordCount}</h1>
